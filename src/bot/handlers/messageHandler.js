@@ -31,7 +31,7 @@ class MessageHandler {
       }
 
       // 如果不是链接，当作商品名称搜索
-      if (message.length > 2 && message.length < 100) {
+      if (message.length >= 1 && message.length < 100) {
         await this.handleProductSearch(ctx, message);
       }
 
@@ -242,20 +242,38 @@ class MessageHandler {
       this.escapeHtml(product.description.substring(0, 100)) + 
       (product.description.length > 100 ? '...' : '') : '';
 
-    let card = `🛍️ <b>${title}</b>\n\n`;
-    card += `💰 价格: <b>${price}</b>\n`;
-    card += `🏪 平台: ${platform}\n`;
+    const cardConfig = config.productCard;
     
-    if (description) {
-      card += `\n📝 ${description}\n`;
+    // 使用类似图片中的格式
+    let card = `🏆 <b>${cardConfig.brandName}-Popular product recommendations.</b>\n\n`;
+    
+    // 商品标题
+    if (title) {
+      card += `📦 <b>${title}</b>\n\n`;
     }
     
-    if (product.similarity) {
-      const similarityPercent = Math.round(product.similarity * 100);
-      card += `\n🎯 相似度: ${similarityPercent}%`;
-    }
+    // 价格信息
+    card += `💰 <b>Price : ${price}</b>\n\n`;
+    
+    // 功能链接
+    card += `🔍 <a href="${product.url}">Link Here</a>\n`;
+    card += `🔍 <a href="https://www.google.com/search?q=${encodeURIComponent(title)}">Search more QC</a>\n\n`;
+    
+    // 联系方式
+    card += `🔗 Find more items <a href="https://wa.me/${cardConfig.whatsappNumber}">WhatsApp</a> & <a href="https://discord.gg/${cardConfig.discordInvite}">discord</a>\n\n`;
+    
+    // 机器人信息
+    card += `🤖 <a href="https://t.me/${cardConfig.botUsername}">${cardConfig.brandName}-bot</a>\n`;
+    card += `👉 <a href="${cardConfig.muleBuyBaseUrl}/product/${this.generateProductId(product)}">mulebuy product link</a>`;
 
     return card;
+  }
+
+  // 生成商品ID（用于mulebuy链接）
+  generateProductId(product) {
+    // 基于商品URL或标题生成一个简单的ID
+    const source = product.url || product.title || 'unknown';
+    return Buffer.from(source).toString('base64').substring(0, 10);
   }
 
   // HTML转义
@@ -327,6 +345,7 @@ class MessageHandler {
 🔍 识别图片中的商品
 🔗 解析商品链接信息  
 📱 搜索商品名称
+📬 定时推送商品推荐
 
 使用方法：
 • 发送商品图片 - 我会识别并推荐相似商品
@@ -335,7 +354,16 @@ class MessageHandler {
 
 快来试试吧！`;
 
-    await ctx.reply(welcomeMessage);
+    const keyboard = {
+      inline_keyboard: [
+        [
+          { text: '🔔 订阅推送', callback_data: 'quick_subscribe' },
+          { text: '📚 查看帮助', callback_data: 'show_help' }
+        ]
+      ]
+    };
+
+    await ctx.reply(welcomeMessage, { reply_markup: keyboard });
   }
 
   // 帮助命令
@@ -351,12 +379,24 @@ class MessageHandler {
 🔍 <b>文字搜索</b>
 直接发送商品名称，我会搜索相关商品
 
+📬 <b>推送服务</b>
+• /subscribe - 订阅推送服务
+• /unsubscribe - 取消推送订阅
+• /push_settings - 设置推送偏好
+• /push_status - 查看推送状态
+
 ⚙️ <b>支持的平台</b>
 • 淘宝/天猫
 • 京东
 • 1688
 • 亚马逊
 • 速卖通
+
+📋 <b>推送功能</b>
+• 每日商品推荐
+• 促销活动通知
+• 价格提醒（即将支持）
+• 新品通知（即将支持）
 
 如有问题，请联系管理员。`;
 

@@ -10,7 +10,15 @@
     "validate": "node scripts/validate.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "echo \"Linting disabled for now\"",
-    "clean": "rm -rf node_modules package-lock.json"
+    "clean": "rm -rf node_modules package-lock.json",
+    "test:push": "node scripts/testPush.js",
+    "send:push": "node scripts/sendPush.js",
+    "broadcast": "node scripts/broadcastToGroups.js",
+    "broadcast:images": "node scripts/broadcastWithImages.js",
+    "groups": "node scripts/getGroupInfo.js",
+    "test:format": "node scripts/testMessageFormat.js",
+    "push:daily": "node -e \"require('./src/bot/bot').pushService.sendDailyRecommendation()\"",
+    "push:report": "node -e \"require('./src/bot/bot').pushService.sendWeeklyReport()\""
   },
   "keywords": [
     "telegram",

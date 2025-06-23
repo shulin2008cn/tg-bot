@@ -24,8 +24,31 @@ const config = {
   // 代理配置
   proxy: {
     enabled: process.env.PROXY_ENABLED === 'true',
-    host: process.env.PROXY_HOST || 'localhost',
-    port: process.env.PROXY_PORT || '7890'
+    host: process.env.PROXY_HOST || '127.0.0.1',
+    port: parseInt(process.env.PROXY_PORT) || 7890
+  },
+
+  // 管理员配置
+  admin: {
+    userIds: process.env.ADMIN_USER_IDS 
+      ? process.env.ADMIN_USER_IDS.split(',').map(id => parseInt(id.trim()))
+      : []
+  },
+
+  // 推送服务配置
+  push: {
+    enabled: process.env.PUSH_ENABLED !== 'false',
+    dailyPushTime: process.env.DAILY_PUSH_TIME || '09:00',
+    weeklyReportTime: process.env.WEEKLY_REPORT_TIME || '10:00'
+  },
+
+  // 商品卡片配置
+  productCard: {
+    brandName: process.env.BRAND_NAME || 'UUFinds',
+    whatsappNumber: process.env.WHATSAPP_NUMBER || 'your_whatsapp_number',
+    discordInvite: process.env.DISCORD_INVITE || 'your_discord',
+    botUsername: process.env.BOT_USERNAME || 'findsRepsBot',
+    muleBuyBaseUrl: process.env.MULEBUY_BASE_URL || 'https://mulebuy.com'
   },
 
   // 其他配置

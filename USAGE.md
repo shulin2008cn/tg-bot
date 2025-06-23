@@ -80,11 +80,28 @@
    - 如："iPhone 15 Pro"、"Nike运动鞋"
    - 返回相关商品推荐
 
+4. **📬 推送服务（新功能）**
+   - 订阅每日商品推荐
+   - 接收促销活动通知
+   - 自定义推送偏好设置
+   - 支持私聊和群组推送
+
 ### 机器人命令
 
-- `/start` - 开始使用机器人
+#### 基础命令
+- `/start` - 开始使用机器人，可快速订阅推送
 - `/help` - 查看详细帮助
 - `/status` - 查看机器人运行状态
+
+#### 推送服务命令（新功能）
+- `/subscribe` - 订阅推送服务
+- `/unsubscribe` - 取消推送订阅  
+- `/push_settings` - 管理推送偏好设置
+- `/push_status` - 查看个人推送订阅状态
+
+#### 管理员命令（需要权限）
+- `/admin_broadcast <消息>` - 向所有订阅者广播消息
+- `/push_stats` - 查看推送服务统计信息
 
 ## 📱 使用场景
 
@@ -110,6 +127,34 @@
 - 更加私密和个人化
 
 ## 🔧 高级配置
+
+### 推送服务配置
+
+1. **管理员权限设置**
+   ```env
+   # 在 .env 文件中设置管理员用户ID
+   ADMIN_USER_IDS=123456789,987654321
+   ```
+
+2. **推送时间配置**
+   ```env
+   # 推送服务配置
+   PUSH_ENABLED=true
+   DAILY_PUSH_TIME=09:00
+   WEEKLY_REPORT_TIME=10:00
+   ```
+
+3. **测试推送功能**
+   ```bash
+   # 运行推送测试
+   npm run test:push
+   
+   # 手动触发每日推荐
+   npm run push:daily
+   
+   # 手动发送周报
+   npm run push:report
+   ```
 
 ### 自定义商品识别
 
@@ -173,6 +218,30 @@ curl https://api.telegram.org/bot<YOUR_TOKEN>/getMe
 # 1. 添加机器人到群组
 # 2. 查看日志中的群组ID
 # 3. 将ID添加到ALLOWED_GROUP_IDS
+```
+
+### 5. 推送功能问题
+
+**推送服务无法启动**
+```bash
+# 检查data目录权限
+ls -la data/
+
+# 创建数据目录
+mkdir -p data
+```
+
+**无法接收推送**
+- 确认已经订阅推送服务：`/subscribe`
+- 检查推送设置：`/push_settings`
+- 查看订阅状态：`/push_status`
+
+**管理员功能无法使用**
+```env
+# 检查管理员ID配置
+cat .env | grep ADMIN_USER_IDS
+
+# 获取自己的用户ID（发送任意消息给机器人，查看日志）
 ```
 
 ## 📊 监控和日志
